@@ -13,16 +13,18 @@ import SimpleTableRow from "./SimpleTableRow";
 
 class Leads extends Component {
   static propTypes = {
-    leads: PropTypes.array.isRequired
+    leads: PropTypes.array.isRequired,
+    getLeads: PropTypes.func.isRequired,
+    deleteLead: PropTypes.func.isRequired
   };
   componentDidMount() {
     this.props.getLeads();
-    console.log(this.state);
   }
   render() {
     return (
       <Fragment>
         <Paper>
+          <h1>Leads</h1>
           <Table>
             <TableHead>
               <TableRow>

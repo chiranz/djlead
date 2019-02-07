@@ -1,67 +1,82 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import TextField from "@material-ui/core/TextField";
+import Paper from "@material-ui/core/Paper";
+import Button from "@material-ui/core/Button";
 
-export default class Form extends Component {
+import { addLead } from "../../actions/leads";
+
+class Form extends Component {
+  static propTypes = {
+    addLead: PropTypes.func.isRequired
+  };
   state = {
     name: "",
-    bio: "",
-    rememberMe: false,
-    title: "Miss"
+    email: "",
+    message: ""
   };
   handleChange = event => {
-    const isCheckbox = event.target.type === "checkbox";
     this.setState({
-      [event.target.name]: isCheckbox
-        ? event.target.checked
-        : event.target.value
+      [event.target.name]: event.target.value
     });
   };
   handleSubmit = event => {
     event.preventDefault();
-    console.log(this.state);
+    const { name, email, message } = this.state;
+    const lead = { name, email, message };
+    this.props.addLead(lead);
   };
   render() {
+    const { name, email, message } = this.state;
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <input
+      <Paper>
+        <h2>Add Lead</h2>
+        <form
+          onSubmit={this.handleSubmit}
+          className={{ display: "flex", flexWrap: "wrap", marginLeft: "30px" }}
+        >
+          <TextField
             placeholder="name"
-            type="text"
-            value={this.state.name}
             name="name"
+            label="Name"
+            margin="normal"
+            variant="outlined"
+            value={name}
             onChange={this.handleChange}
           />
-        </div>
-        <div>
-          <textarea
+
+          <TextField
+            label="Email"
+            margin="normal"
+            variant="outlined"
             placeholder="Tell something about yourself"
-            type="text"
-            value={this.state.bio}
-            name="bio"
+            name="email"
+            value={email}
             onChange={this.handleChange}
           />
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            checked={this.state.checked}
-            name="rememberMe"
+
+          <TextField
+            label="Message"
+            margin="normal"
+            variant="outlined"
+            name="message"
+            multiline
+            rowsMax="3"
+            value={message}
             onChange={this.handleChange}
           />
-        </div>
-        <div>
-          <select
-            name="title"
-            defaultValue={this.state.title}
-            onChange={this.handleChange}
-          >
-            <option>Mr.</option>
-            <option>Miss.</option>
-            <option>Mrs.</option>
-            <option>Ms.</option>
-          </select>
-        </div>
-        <button type="submit">Submit</button>
-      </form>
+
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+        </form>
+      </Paper>
     );
   }
 }
+
+export default connect(
+  null,
+  { addLead }
+)(Form);
