@@ -1,8 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 
 import { addLead } from "../../actions/leads";
@@ -26,11 +25,17 @@ class Form extends Component {
     const { name, email, message } = this.state;
     const lead = { name, email, message };
     this.props.addLead(lead);
+    this.setState({
+      name: "",
+      email: "",
+      message: ""
+    });
   };
   render() {
     const { name, email, message } = this.state;
+    const { errors } = this.props;
     return (
-      <Paper>
+      <div style={{ marginTop: 20, marginBottom: 20 }}>
         <h2>Add Lead</h2>
         <form
           onSubmit={this.handleSubmit}
@@ -42,20 +47,26 @@ class Form extends Component {
             label="Name"
             margin="normal"
             variant="outlined"
+            style={{ width: 500 }}
             value={name}
             onChange={this.handleChange}
+            error={errors.msg.name ? true : false}
+            helperText={errors.msg.name}
           />
-
+          <br />
           <TextField
             label="Email"
             margin="normal"
             variant="outlined"
             placeholder="Tell something about yourself"
             name="email"
+            style={{ width: 500 }}
             value={email}
             onChange={this.handleChange}
+            error={errors.msg.email ? true : false}
+            helperText={errors.msg.email}
           />
-
+          <br />
           <TextField
             label="Message"
             margin="normal"
@@ -65,18 +76,29 @@ class Form extends Component {
             rowsMax="3"
             value={message}
             onChange={this.handleChange}
+            style={{ width: 500 }}
           />
-
-          <Button type="submit" variant="contained" color="primary">
+          <br />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: 400 }}
+          >
             Submit
           </Button>
         </form>
-      </Paper>
+        <div>{this.props.message.info}</div>
+      </div>
     );
   }
 }
+const mapStateToProps = state => ({
+  errors: state.errorReducer,
+  message: state.messageReducer
+});
 
 export default connect(
-  null,
+  mapStateToProps,
   { addLead }
 )(Form);
