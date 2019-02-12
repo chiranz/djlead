@@ -1,5 +1,5 @@
 import axios from "axios";
-import returnErrors from "./messages";
+import { returnErrors } from "./messages";
 import { USER_LOADED, USER_LOADING, AUTH_ERROR } from "../actions/types";
 
 // CHECK TOKEN AND LOAD USER
