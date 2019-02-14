@@ -42,7 +42,7 @@ class Form extends Component {
           className={{ display: "flex", flexWrap: "wrap", marginLeft: "30px" }}
         >
           <TextField
-            placeholder="name"
+            placeholder="Your name here"
             name="name"
             label="Name"
             margin="normal"
@@ -58,7 +58,7 @@ class Form extends Component {
             label="Email"
             margin="normal"
             variant="outlined"
-            placeholder="Tell something about yourself"
+            placeholder="Your email here"
             name="email"
             style={{ width: 500 }}
             value={email}
@@ -70,6 +70,7 @@ class Form extends Component {
           <TextField
             label="Message"
             margin="normal"
+            placeholder="Tell me something about yourself"
             variant="outlined"
             name="message"
             multiline

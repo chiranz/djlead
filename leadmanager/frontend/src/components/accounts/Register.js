@@ -1,11 +1,18 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { register } from "../../actions/auth";
+import { createMessage } from "../../actions/messages";
 
-export default class Register extends Component {
+class Register extends Component {
+  static propTypes = {
+    isAuthenticated: PropTypes.bool.isRequired,
+    register: PropTypes.func.isRequired
+  };
   state = {
     username: "",
     email: "",
@@ -19,10 +26,24 @@ export default class Register extends Component {
   };
   handleSubmit = event => {
     event.preventDefault();
-    console.log("submit");
+    const { password, password2, username, email } = this.state;
+    if (password !== password2) {
+      this.props.createMessage({ passwordNotMatch: "Passwords do not match" });
+    } else {
+      const newUser = {
+        username,
+        email,
+        password
+      };
+      this.props.register(newUser);
+    }
   };
   render() {
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/" />;
+    }
     const { name, email, password, password2 } = this.state;
+    const { errors } = this.props;
     return (
       <div>
         <Grid container direction="row" justify="center" alignItems="center">
@@ -39,13 +60,15 @@ export default class Register extends Component {
               <TextField
                 autoFocus
                 placeholder="Your Username"
-                name="name"
-                label="Name"
+                name="username"
+                label="User Name"
                 margin="normal"
                 variant="outlined"
                 style={{ width: 500 }}
                 value={name}
                 onChange={this.handleChange}
+                error={errors.msg.username ? true : false}
+                helperText={errors.msg.username}
               />
               <br />
               <TextField
@@ -56,6 +79,8 @@ export default class Register extends Component {
                 style={{ width: 500 }}
                 value={email}
                 onChange={this.handleChange}
+                error={errors.msg.email ? true : false}
+                helperText={errors.msg.email}
               />
               <br />
               <TextField
@@ -67,6 +92,8 @@ export default class Register extends Component {
                 value={password}
                 onChange={this.handleChange}
                 style={{ width: 500 }}
+                error={errors.msg.password ? true : false}
+                helperText={errors.msg.password}
               />
               <br />
               <TextField
@@ -94,3 +121,12 @@ export default class Register extends Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  isAuthenticated: state.authReducer.isAuthenticated,
+  errors: state.errorReducer
+});
+
+export default connect(
+  mapStateToProps,
+  { register, createMessage }
+)(Register);
