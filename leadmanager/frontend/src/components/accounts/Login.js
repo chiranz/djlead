@@ -1,14 +1,20 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-import Paper from "@material-ui/core/Paper";
+import { Link, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { login } from "../../actions/auth";
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     username: "",
     password: ""
+  };
+  static propTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
   };
   handleChange = event => {
     this.setState({
@@ -17,10 +23,13 @@ export default class Login extends Component {
   };
   handleSubmit = event => {
     event.preventDefault();
-    console.log("submmit");
+    this.props.login(this.state.username, this.state.password);
   };
   render() {
-    const { name, password } = this.state;
+    if (this.props.isAuthenticated) {
+      return <Redirect to="/" />;
+    }
+    const { username, password } = this.state;
     return (
       <div>
         <Grid container direction="row" justify="center" alignItems="center">
@@ -30,12 +39,12 @@ export default class Login extends Component {
               <TextField
                 autoFocus
                 placeholder="Your username"
-                name="name"
-                label="Name"
+                name="username"
+                label="Username"
                 margin="normal"
                 variant="outlined"
                 style={{ width: 500 }}
-                value={name}
+                value={username}
                 onChange={this.handleChange}
               />
               <br />
@@ -64,3 +73,11 @@ export default class Login extends Component {
     );
   }
 }
+const mapStateToProps = state => ({
+  isAuthenticated: state.authReducer.isAuthenticated
+});
+
+export default connect(
+  mapStateToProps,
+  { login }
+)(Login);

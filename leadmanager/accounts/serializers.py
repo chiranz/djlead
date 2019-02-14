@@ -26,9 +26,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 # Login Serializer
 class LoginSerializer(serializers.Serializer):
-    class Meta:
-        username = serializers.CharField()
-        password = serializers.CharField()
+
+    username = serializers.CharField()
+    password = serializers.CharField()
 
     def validate(self, data):
         user = authenticate(**data)

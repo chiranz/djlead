@@ -1,4 +1,10 @@
-import { USER_LOADED, USER_LOADING, AUTH_ERROR } from "../actions/types";
+import {
+  USER_LOADED,
+  USER_LOADING,
+  AUTH_ERROR,
+  LOGIN_FAIL,
+  LOGIN_SUCCESS
+} from "../actions/types";
 
 const initialState = {
   token: localStorage.getItem("token"),
@@ -9,6 +15,11 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
+    case USER_LOADING:
+      return {
+        ...state,
+        isLoading: true
+      };
     case USER_LOADED:
       return {
         ...state,
@@ -16,12 +27,17 @@ export default function(state = initialState, action) {
         isLoading: false,
         user: action.payload
       };
-    case USER_LOADING:
+    case LOGIN_SUCCESS:
+      localStorage.setItem("token", action.payload.token);
       return {
         ...state,
-        isLoading: true
+        ...action.payload,
+        isAuthenticated: true,
+        isLoading: false
       };
+
     case AUTH_ERROR:
+    case LOGIN_FAIL:
       localStorage.removeItem("token");
       return {
         ...state,
